@@ -16,13 +16,13 @@ A simple Android app that fetches and displays random cat images from [The Cat A
 
 ## Screenshots
 
-*(Add your screenshots here, e.g.)*
 
-![Loading Screen]![image](https://github.com/user-attachments/assets/9bf68f05-9b59-43ea-a1f1-d1fb5eaa22c0)
 
-![Cat Image Display]![image](https://github.com/user-attachments/assets/e4d6d327-4442-498b-b886-d20789c72aab)
+![image](https://github.com/user-attachments/assets/9bf68f05-9b59-43ea-a1f1-d1fb5eaa22c0)
 
-![Error State]![image](https://github.com/user-attachments/assets/ca322611-a775-48f8-8f6f-4053c0a54e2d)
+![image](https://github.com/user-attachments/assets/e4d6d327-4442-498b-b886-d20789c72aab)
+
+![image](https://github.com/user-attachments/assets/ca322611-a775-48f8-8f6f-4053c0a54e2d)
 
 
 ---
