@@ -1,7 +1,7 @@
 package com.example.cats
 
 import android.os.Bundle
-import android.os.StrictMode
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.cats.databinding.ActivityMainBinding
 import com.squareup.picasso.Picasso
@@ -17,34 +17,49 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Allow network call on main thread for simplicity (not recommended for production!)
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().permitAll().build())
-
         binding.btn.setOnClickListener {
-            fetchCatImage()
+            val url = "https://api.thecatapi.com/v1/images/search"
+            fetchCatImage(url)
         }
     }
 
-    private fun fetchCatImage() {
-        val urlString = "https://api.thecatapi.com/v1/images/search"
-        val url = URL(urlString)
-        val connection = url.openConnection() as HttpURLConnection
+    private fun fetchCatImage(urlString: String) {
+            binding.catimg.setImageDrawable(null)
+        binding.error.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+        Thread {
+            try {
+                val url = URL(urlString)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connect()
 
-        try {
-            connection.requestMethod = "GET"
-            connection.connect()
-
-            if (connection.responseCode == HttpURLConnection.HTTP_OK) {
-                val stream = connection.inputStream.bufferedReader().readText()
-                val jsonArray = JSONArray(stream)
+                val responseText = connection.inputStream.bufferedReader().readText()
+                val jsonArray = JSONArray(responseText)
                 val imageUrl = jsonArray.getJSONObject(0).getString("url")
 
-                Picasso.get().load(imageUrl).into(binding.catimg)
+                runOnUiThread {
+                    Picasso.get()
+                        .load(imageUrl)
+                        .into(binding.catimg, object : com.squareup.picasso.Callback {
+                            override fun onSuccess() {
+                                binding.progressBar.visibility = View.GONE
+
+                            }
+
+                            override fun onError(e: Exception?) {
+                                binding.error.visibility = View.VISIBLE
+                                binding.progressBar.visibility = View.GONE
+                            }
+                        })
+                }
+
+            } catch (e: Exception) {
+                runOnUiThread {
+                    binding.error.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
+                }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            connection.disconnect()
-        }
+        }.start()
     }
 }
